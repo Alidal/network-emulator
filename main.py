@@ -1,11 +1,24 @@
 import jinja2
 import asyncio
 import aiohttp_jinja2
+
 from aiohttp import web
+
+from server.network.glob import GlobalNetwork
+
+
+network = GlobalNetwork()
 
 
 async def index(request):
     return aiohttp_jinja2.render_template('index.html', request, {})
+
+
+async def get_network(request):
+    return web.json_response(network.connections_to_list())
+
+async def get_nodes(request):
+    return web.json_response(network.nodes_to_list())
 
 
 async def init(loop):
@@ -13,6 +26,8 @@ async def init(loop):
     app = web.Application(loop=loop)
 
     app.router.add_get('/', index)
+    app.router.add_get('/nodes', get_nodes)
+    app.router.add_get('/network', get_network)
     app.router.add_static('/static', './client/static')
 
     aiohttp_jinja2.setup(app,
