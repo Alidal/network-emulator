@@ -6,51 +6,31 @@
     <link href="/static/css/vis.min.css" rel="stylesheet">
     <link href="/static/css/font-awesome.min.css" rel="stylesheet">
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-</head>
 
-<body>
     <script src="/static/js/jquery-3.1.1.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
-
-    <div id="network"></div>
-
     <script src="/static/js/vis.min.js"></script>
-    <script type="text/javascript">
-        $.getJSON('/network', function(edges) {
-            $.getJSON('/nodes', function(nodes) {
-                // create a network
-                var container = document.getElementById('network');
+    <script src="/static/js/app.js"></script>
+</head>
 
-                // provide the data in the vis format
-                var data = {
-                    nodes: nodes,
-                    edges: edges
-                };
-
-                var options = {
-                    width: '1920px',
-                    height: '960px',
-                    nodes: {
-                        shape: 'circle',
-                        borderWidth: 2,
-                        mass: 2,
-                        font: {
-                            size: 30
-                        }
-                    },
-                    edges: {
-                        selectionWidth: 4,
-                        width: 2,
-                    },
-                    interaction:{
-                        hover: true,
-                    },
-                    physics: false,
-                };
-
-                // initialize your network!
-                var network = new vis.Network(container, data, options);
-            });
-        });
-    </script>
+<body onload="init()">
+    {# <div id="network-popUp">
+      <span id="operation">node</span>
+      </br>
+      <table style="margin:auto;">
+          <td>Regional network</td>
+          <td>
+            <select id="node-group">
+              <option value="0">1</option>
+              <option value="1">2</option>
+              <option value="2">3</option>
+              <option value="3">4</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <input type="button" value="save" id="saveButton" />
+      <input type=" button" value="cancel" id="cancelButton" />
+    </div>#}
+    <div id="network"></div>
 </body>
