@@ -14,23 +14,37 @@
 </head>
 
 <body onload="init()">
-    {# <div id="network-popUp">
-      <span id="operation">node</span>
-      </br>
-      <table style="margin:auto;">
-          <td>Regional network</td>
-          <td>
-            <select id="node-group">
-              <option value="0">1</option>
-              <option value="1">2</option>
-              <option value="2">3</option>
-              <option value="3">4</option>
-            </select>
-          </td>
-        </tr>
-      </table>
-      <input type="button" value="save" id="saveButton" />
-      <input type=" button" value="cancel" id="cancelButton" />
-    </div>#}
+  <div id="routing-table-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 id="routing-table-title" class="modal-title">Routing table</h4></p>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Target node</th>
+                <th>Min. weights path</th>
+                <th>Cost</th>
+                <th>Min. transitions path</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody id="routing-table">
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
     <div id="network"></div>
 </body>

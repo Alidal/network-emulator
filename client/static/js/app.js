@@ -82,12 +82,13 @@ function init() {
       network = new vis.Network(container, data, options);
 
       // Handle swithing between duplex and half-duplex by double-click
-      network.on("doubleClick", changeEdgeType);
+      network.on("doubleClick", doubleClickHandler);
     });
   });
 }
 
-function changeEdgeType(params) {
+function doubleClickHandler(params) {
+  // If edge - change edge type
   if (params.edges.length == 1) {
     edge_id = params.edges[0]
     $.getJSON('/connection-details', {'connection_id': edge_id}, function(connection) {
@@ -101,18 +102,21 @@ function changeEdgeType(params) {
       network.clustering.updateEdge(edge_id,  {dashes: dashes})
       $.post('update-connection', connection)
     });
+  } else if (params.nodes.length == 1) {
+    node_id = params.nodes[0]  
+    $.getJSON('/routing-table', {'node_id': node_id}, function(table) {
+      $("#routing-table").empty()
+      $("#routing-table-title").text("Routing table for node " + node_id)
+      jQuery.each(table, function(index, value) {
+        $("#routing-table").append("<tr><td><b>" + index + "</b></td>" + 
+          "<td>" + value.min_weights.path.join("\u2192") + "</td>" + 
+          "<td>" + value.min_weights.cost + "</td>" + 
+          "<td>" + value.min_transitions.path.join("\u2192") + "</td>" +
+          "<td>" + value.min_transitions.cost + "</td></tr>");
+      });
+      $('#routing-table-modal').modal('toggle');
+    });
   }
-}
-
-function clearPopUp() {
-  document.getElementById('saveButton').onclick = null;
-  document.getElementById('cancelButton').onclick = null;
-  document.getElementById('network-popUp').style.display = 'none';
-}
-
-function cancelEdit(callback) {
-  clearPopUp();
-  callback(null);
 }
 
 function saveNodeData(data, callback) {

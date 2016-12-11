@@ -1,7 +1,7 @@
 class Connection:
     def __init__(self, weight, source=None, target=None, network_id=-1,
                  _type='duplex'):
-        self.weight = weight
+        self._weight = weight
         self.type = _type  # 1 is duplex, 1.5 is half-duplex
         self.source = source  # ID of source node
         self.target = target  # ID of target node
@@ -11,6 +11,10 @@ class Connection:
     def id(self):
         return '{}-{}'.format(self.source, self.target)
 
+    @property
+    def weight(self):
+        return self._weight * 1.5 if self.type == 'half-duplex' else self._weight
+
     def is_connection_between(self, source, target):
         return {self.source, self.target} == {source, target}
 
@@ -18,7 +22,7 @@ class Connection:
         return {
             'from': self.source, 'to': self.target, 'id': self.id,
             'dashes': False if self.type == 'duplex' else[2, 2, 10, 10],
-            'type': self.type, 'label': self.weight,
+            'type': self.type, 'label': self._weight,
         }
 
     def update_from_dict(self, _dict):

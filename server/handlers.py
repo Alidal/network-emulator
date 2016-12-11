@@ -25,6 +25,12 @@ async def get_connection_details(request):
     return web.json_response(connection.to_dict())
 
 
+async def get_routing_table(request):
+    node_id = request.rel_url.query['node_id']
+    table = network.nodes[int(node_id)].routing_table
+    return web.json_response(table)
+
+
 async def post_update_connection(request):
     data = await request.post()
     network.update_connection(data)
