@@ -103,6 +103,7 @@ function doubleClickHandler(params) {
       $.post('update-connection', connection)
     });
   } else if (params.nodes.length == 1) {
+    // If node - get routing table
     node_id = params.nodes[0]  
     $.getJSON('/routing-table', {'node_id': node_id}, function(table) {
       $("#routing-table").empty()

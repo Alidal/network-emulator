@@ -39,7 +39,8 @@ async def post_update_connection(request):
 
 async def post_add_connection(request):
     data = await request.post()
-    connection = network.add_connection(int(data['from']), int(data['to']))
+    connection = network.add_connection(int(data['from']), int(data['to']),
+                                        recalc_table=True)
     return web.json_response(connection.to_dict())
 
 async def delete_elements(request):

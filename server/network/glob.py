@@ -23,8 +23,9 @@ class GlobalNetwork():
         self.add_connection(2, 23)
         self.add_connection(23, 37)
         self.add_connection(37, 18)
-        self.add_connection(18, 2)
+        self.add_connection(18, 2, recalc_table=True)
 
+    def recalculate_routing_tables(self):
         for node_id in self.nodes:
             self.nodes[node_id].routing_table = self.generate_routing_table(node_id)
 
@@ -160,7 +161,7 @@ class GlobalNetwork():
         """Just a little shortcut for explicity"""
         self.nodes[node_id] = Node(node_id, network_id)
 
-    def add_connection(self, source, target, network_id=-1):
+    def add_connection(self, source, target, network_id=-1, recalc_table=False):
         """Add new connection to global list of connections.
         network_id=-1 means that connection is between regional networks
         """
@@ -178,6 +179,8 @@ class GlobalNetwork():
             network_id = self.nodes[source].network_id
             self.add_node(target, network_id)
 
+        if recalc_table:
+            self.recalculate_routing_tables()
         return connection
 
     def update_connection(self, conn_dict):
@@ -185,9 +188,11 @@ class GlobalNetwork():
 
     def delete_connection(self, conn_id):
         del self.connections[conn_id]
+        self.recalculate_routing_tables()
 
     def delete_node(self, node_id):
         del self.nodes[node_id]
+        self.recalculate_routing_tables()
 
     def serialize_connections(self):
         """Serialize connection objects list to list of dictionaries"""
