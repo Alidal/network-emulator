@@ -16,6 +16,7 @@ async def init(loop):
     app.router.add_get('/connections', get_connections)
     app.router.add_get('/connection-details', get_connection_details)
     app.router.add_get('/routing-table', get_routing_table)
+    app.router.add_post('/send-message', post_send_message)
     app.router.add_post('/add-connection', post_add_connection)
     app.router.add_post('/update-connection', post_update_connection)
     app.router.add_delete('/delete-elements', delete_elements)

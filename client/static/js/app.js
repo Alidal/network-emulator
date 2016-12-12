@@ -11,6 +11,12 @@ function destroy() {
 function init() {
   $.getJSON('/connections', function(edges) {
     $.getJSON('/nodes', function(nodes) {
+      // Fill selects
+      $.each(nodes, function(index, node) {
+        $("#from").append($("<option />").val(index + 1).text(index + 1));
+        $("#to").append($("<option />").val(index + 1).text(index + 1));
+      });
+
       destroy();
 
       // provide the data in the vis format
@@ -46,6 +52,11 @@ function init() {
           addNode: function (data, callback) {
             data.id = currentID;
             data.label = data.id;
+
+            // Refill dropdown lists in "Send message" menu
+            $("#from").append($("<option />").val(data.id + 1).text(data.id + 1));
+            $("#to").append($("<option />").val(data.id + 1).text(data.id + 1));
+
             currentID++;
             callback(data)
           },
@@ -120,11 +131,10 @@ function doubleClickHandler(params) {
   }
 }
 
-function saveNodeData(data, callback) {
-  data.group = document.getElementById('node-group').value;
-  data.id = currentID;
-  data.label = data.id;
-  currentID++;
-  clearPopUp();
-  callback(data);
+function sendMessage() {
+  $.post('/send-message', {
+    length: $("#message-length").val(),
+    from: $("#from").val(),
+    to: $("#to").val(),
+  });
 }

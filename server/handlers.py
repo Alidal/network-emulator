@@ -43,6 +43,11 @@ async def post_add_connection(request):
                                         recalc_table=True)
     return web.json_response(connection.to_dict())
 
+async def post_send_message(request):
+    data = await request.post()
+    print(data)
+    return web.json_response()
+
 async def delete_elements(request):
     data = await request.post()
     try:

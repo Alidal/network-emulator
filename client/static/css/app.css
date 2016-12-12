@@ -20,3 +20,12 @@ div.table_content {
 div.table_description {
    width:100px;
 }
+
+.fixed-right {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    padding: 0px 6px !important;
+    height: 27px;
+    z-index:1000000;
+}
