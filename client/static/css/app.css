@@ -29,3 +29,14 @@ div.table_description {
     height: 27px;
     z-index:1000000;
 }
+
+.modal {
+    overflow: -moz-scrollbars-vertical; 
+    overflow-y: scroll !important;
+}
+
+.nowrap td { white-space: nowrap !important; }
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 5px !important; // currently 8px
+}

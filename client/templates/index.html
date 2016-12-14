@@ -44,7 +44,7 @@
   </div>
 
   <div id="send-message-modal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -54,14 +54,47 @@
           <label for="message-length">Message length</label>
           <input name="message-length" id="message-length" value="3000"/>
           <br/><br/>
+          <label for="package-size">Package size</label>
+          <input name="package-size" id="package-size" value="1000"/>
+          <br/><br/>
+
           <label for="from">Source node: </label>
           <select name="from" id="from"></select>
-          <label for="to">Target node:</label>
-          <select name="to" id="to"></select>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="sendMessage()">Transfer</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="sendMessage('datagram')">Datagram mode</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="sendMessage('virtual')">Virtual channel mode</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="message-sending-table-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" width="1000px">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 id="message-sending-table-title" class="modal-title">Routing table</h4></p>
+        </div>
+        <div class="modal-body">
+          <table class="table nowrap">
+            <thead>
+              <tr>
+                <th>Target node</th>
+                <th>Path</th>
+                <th>Service packages</th>
+                <th>Data packages</th>
+                <th>Time</th>
+                {# <th>Traffic</th> #}
+              </tr>
+            </thead>
+            <tbody id="message-sending-table">
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

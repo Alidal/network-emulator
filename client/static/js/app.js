@@ -131,10 +131,26 @@ function doubleClickHandler(params) {
   }
 }
 
-function sendMessage() {
-  $.post('/send-message', {
-    length: $("#message-length").val(),
-    from: $("#from").val(),
-    to: $("#to").val(),
+function sendMessage(type) {
+  data = {
+    message_length: $("#message-length").val(),
+    package_size: $("#package-size").val(),
+    start: $("#from").val(),
+    type: type
+  }
+  $.post('/send-message', data, function(result) {
+    $("#message-sending-table").empty()
+    $("#message-sending-table-title").text("Message sending for node " +
+                                           data.start + " (" + type + ")")
+    jQuery.each(result, function(index, value) {
+      $("#message-sending-table").append(
+        "<tr><td><b>" + value.finish + "</b></td>" + 
+        "<td>" + value.path.join("\u2192").substring(0, 60) + "..." + "</td>" + 
+        "<td>" + value.service_packages + "</td>" + 
+        "<td>" + value.data_packages + "</td>" +
+        "<td>" + value.time + "</td></tr>");
+        //"<td>" + value.traffic + "</td></tr>");
+    });
+    $('#message-sending-table-modal').modal('toggle');
   });
 }

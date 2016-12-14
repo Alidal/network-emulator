@@ -1,4 +1,5 @@
 import sys
+import math
 import heapq
 from random import randint, choice
 from .node import Node
@@ -84,25 +85,6 @@ class GlobalNetwork():
         del table[node_id]
         return table
 
-    def min_transitions_path(self, start, finish):
-        cur_min_path = [i for i in range(100)]
-
-        def recursive_neighbors(node_id, cur_path):
-            nonlocal cur_min_path
-            if node_id == finish:
-                if len(cur_path) < len(cur_min_path):
-                    cur_min_path = cur_path
-                return
-            elif len(cur_min_path) < len(cur_path):
-                return
-
-            neighbors = self.get_node_connections(node_id, exclude=cur_path)
-            for item in neighbors:
-                recursive_neighbors(item, cur_path + [item])
-
-        recursive_neighbors(start, [start])
-        return cur_min_path
-
     def shortest_path(self, start, finish, no_weight=False):
         distances = {}  # Distance from start to node
         previous = {}  # Previous node in optimal path from source
@@ -146,6 +128,74 @@ class GlobalNetwork():
                             break
                     heapq.heapify(nodes)
 
+    def datagram_mode(self, start, finish, message_length, package_size, **kwargs):
+        package_size = int(package_size)
+        pathes = []
+
+        def build_pathes(cur_path):
+            if cur_path[-1] == finish:
+                pathes.append(cur_path)
+                return
+
+            routing_table = self.nodes[cur_path[-1]].routing_table[finish]
+            next = routing_table['min_weights']['path'][1]
+            if next not in cur_path:
+                build_pathes(cur_path + [next])
+                if routing_table['min_weights']['path'] != routing_table['min_transitions']['path']:
+                    build_pathes(cur_path + [routing_table['min_transitions']['path'][1]])
+
+        build_pathes([int(start)])
+
+        start_num_of_data_packages = math.ceil(int(message_length) / int(package_size))
+        size_of_service_package = 100
+        traffic = 0
+        speed = 1000  # Default speed in connection with weight 1
+        time = 0
+        num_of_data_packages = 0
+        for i in range(start_num_of_data_packages):
+            path = pathes[i % len(pathes)]
+            num_of_data_packages += len(path) - 1
+            traffic += package_size + size_of_service_package
+            for i in range(len(path) - 1):
+                conn = self.get_connection_between(path[i], path[i + 1])
+                time += ((package_size + size_of_service_package) / speed) * conn.weight
+
+        return {
+            'service_packages': num_of_data_packages,
+            'data_packages': num_of_data_packages,
+            'time': int(time),
+            'path': pathes,
+            'traffic': traffic,
+            'finish': finish
+        }
+
+    def logical_channel_mode(self, start, finish, message_length, package_size, **kwargs):
+        routing_table = self.nodes[int(start)].routing_table[int(finish)]['min_weights']
+        path = routing_table['path']
+        print(path)
+        transitions = len(path) - 1
+
+        num_of_data_packages = math.ceil(int(message_length) / int(package_size)) * transitions
+        # Connect + disconnect + acks for each package
+        num_of_service_packages = (2 + num_of_data_packages) * transitions
+        size_of_service_package = 100
+        traffic = (num_of_data_packages * int(package_size) + num_of_service_packages\
+                   * size_of_service_package) / transitions
+        speed = 1000  # Default speed in connection with weight 1
+        time = 0
+        for i in range(len(path) - 1):
+            conn = self.get_connection_between(path[i], path[i+1])
+            time += (traffic / speed) * conn.weight
+
+        return {
+            'service_packages': num_of_service_packages,
+            'data_packages': num_of_data_packages,
+            'time': int(time),
+            'path': path,
+            'traffic': traffic,
+            'finish': finish
+        }
+
     def get_node_connections(self, node_id, exclude=None):
         if exclude is None:
             exclude = []
@@ -156,6 +206,13 @@ class GlobalNetwork():
             elif conn.target == node_id and conn.source not in exclude:
                 result[conn.source] = conn.weight
         return result
+
+    def get_connection_between(self, a, b):
+        for conn in self.connections.values():
+            if conn.is_connection_between(a, b):
+                return conn
+
+        return None
 
     def add_node(self, node_id, network_id):
         """Just a little shortcut for explicity"""

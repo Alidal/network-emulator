@@ -45,8 +45,14 @@ async def post_add_connection(request):
 
 async def post_send_message(request):
     data = await request.post()
-    print(data)
-    return web.json_response()
+    result = []
+    for i in range(len(network.nodes)):
+        if i + 1 != int(data['start']):
+            if data['type'] == 'virtual':
+                result.append(network.logical_channel_mode(finish=i + 1, **data))
+            else:
+                result.append(network.datagram_mode(finish=i + 1, **data))
+    return web.json_response(result)
 
 async def delete_elements(request):
     data = await request.post()
